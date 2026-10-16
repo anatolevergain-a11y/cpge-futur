@@ -1,0 +1,17 @@
+/* Masquer la couche MathML brute pour éviter le double affichage KaTeX */
+.katex-mathml {
+	display: none !important;
+}
+
+/* Style et défilement fluide pour les équations complexes */
+.katex-display {
+	padding: 0.8rem;
+	overflow-x: auto;
+}
+
+/* Couleurs d'accentuation du thème */
+:root {
+	--sl-color-accent-low: #082f49;
+	--sl-color-accent: #0284c7;
+	--sl-color-accent-high: #38bdf8;
+}

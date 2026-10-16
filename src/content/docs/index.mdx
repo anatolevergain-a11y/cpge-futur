@@ -1,40 +1,27 @@
 ---
-title: Welcome to Starlight
-description: Get started building your docs site with Starlight.
-template: splash # Remove or comment out this line to display the site sidebar on this page.
+title: 'CPGE Next - La plateforme d excellence pour CPGE'
+description: 'Cours complets, fiches de synthèse et exercices corrigés pour les classes préparatoires.'
+template: splash
 hero:
-  tagline: Congrats on setting up a new Starlight project!
-  image:
-    file: ../../assets/houston.webp
+  tagline: Révise efficacement tes cours de 1ère et 2ème année CPGE avec des fiches de cours et des exercices corrigés type concours.
   actions:
-    - text: Example Guide
-      link: /guides/example/
+    - text: Explorer les cours
+      link: /deuxieme-annee/mp/mathematiques/algebre-bilineaire-euclidienne/
       icon: right-arrow
-    - text: Read the Starlight docs
-      link: https://starlight.astro.build
-      icon: external
-      variant: minimal
+      variant: 'primary'
 ---
 
 import { Card, CardGrid } from '@astrojs/starlight/components';
 
-## Next steps
+## 🌟 Choisissez votre niveau et votre filière
 
-<CardGrid stagger>
-	<Card title="Update content" icon="pencil">
-		Edit `src/content/docs/index.mdx` to see this page change.
+<CardGrid>
+	<Card title="Première Année (Sup)" icon="open-book">
+		MPSI, PCSI, PTSI, MP2I, BCPST 1.
+		[Accéder au programme de 1ère année](/premiere-annee/mpsi/mathematiques/calcul-matriciel/)
 	</Card>
-	<Card title="Change page layout" icon="document">
-		Delete `template: splash` in `src/content/docs/index.mdx` to display a
-		sidebar on this page.
-	</Card>
-	<Card title="Add new content" icon="add-document">
-		Add Markdown or MDX files to `src/content/docs` to create new pages.
-	</Card>
-	<Card title="Configure your site" icon="setting">
-		Edit your `sidebar` and other config in `astro.config.mjs`.
-	</Card>
-	<Card title="Read the docs" icon="open-book">
-		Learn more in [the Starlight Docs](https://starlight.astro.build/).
+	<Card title="Deuxième Année (Spé)" icon="degree-hat">
+		MP, PC, PSI, PT, MPI, BCPST 2.
+		[Accéder au programme de 2ème année](/deuxieme-annee/mp/mathematiques/algebre-bilineaire-euclidienne/)
 	</Card>
 </CardGrid>
