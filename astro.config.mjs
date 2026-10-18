@@ -7,7 +7,7 @@ import sitemap from '@astrojs/sitemap';
 
 export default defineConfig({
 	// URL officielle de votre site (indispensable pour la génération du sitemap)
-	site: 'https://cpge-next.fr',
+	site: 'https://cpge-futur.vercel.app/',
 
 	markdown: {
 		remarkPlugins: [remarkMath],
@@ -34,7 +34,16 @@ export default defineConfig({
 						href: 'https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css',
 					},
 				},
-			],
+			// Intégration de Google AdSense pour la monétisation du site
+			{
+					tag: 'script',
+					attrs: {
+						async: true,
+						src: "https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9036203782966082",
+						crossorigin: 'anonymous',
+					},
+			},
+		],
 			customCss: [
 				// Fichier CSS personnalisé pour masquer MathML et ajuster la mise en page
 				'./src/styles/custom.css',
