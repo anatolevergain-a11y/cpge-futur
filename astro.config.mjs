@@ -7,7 +7,7 @@ import sitemap from '@astrojs/sitemap';
 
 export default defineConfig({
 	// URL officielle de votre site (indispensable pour la génération du sitemap)
-	site: 'https://cpge-futur.vercel.app/',
+	site: 'https://cpge-futur.com/',
 
 	markdown: {
 		remarkPlugins: [remarkMath],
@@ -39,10 +39,10 @@ export default defineConfig({
 					tag: 'script',
 					attrs: {
 						async: true,
-						src: "https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9036203782966082",
+						src: 'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9036203782966082',
 						crossorigin: 'anonymous',
 					},
-			},
+				},
 		],
 			customCss: [
 				// Fichier CSS personnalisé pour masquer MathML et ajuster la mise en page
