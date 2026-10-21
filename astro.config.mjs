@@ -7,7 +7,7 @@ import sitemap from '@astrojs/sitemap';
 
 export default defineConfig({
 	// URL officielle de votre site (indispensable pour la génération du sitemap)
-	site: 'https://cpge-futur.com/',
+	site: 'https://cpgefutur.com/',
 
 	markdown: {
 		remarkPlugins: [remarkMath],
