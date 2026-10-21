@@ -26,6 +26,23 @@ export default defineConfig({
 			title: 'CPGE Futur',
 			description: 'Plateforme d\'excellence pour les classes préparatoires scientifiques (CPGE).',
 			head: [
+				// 📊 Google Analytics (GA4)
+        {
+          tag: 'script',
+          attrs: {
+            async: true,
+            src: 'https://www.googletagmanager.com/gtag/js?id=G-M9J8YKDXKX',
+          },
+        },
+        {
+          tag: 'script',
+          content: `
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'G-M9J8YKDXKX');
+          `,
+        },
 				// Chargement impératif de la feuille de style CSS de KaTeX pour éviter les doublons d'affichage MathML/HTML
 				{
 					tag: 'link',
