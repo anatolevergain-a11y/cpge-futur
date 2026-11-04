@@ -1,0 +1,6 @@
+{
+  "name": "CPGE Futur",
+  "description": "Plateforme d'excellence pour prépas scientifiques (MPSI, PCSI, MP, PC, PSI, MPI, BCPST) : cours, exercices corrigés, khôlles et simulations interactives.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
