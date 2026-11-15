@@ -28,8 +28,36 @@ import {
 
 type NavTab = 'home' | 'courses' | 'exercises' | 'lab' | 'kholle' | 'reflexes' | 'erreurs-musts' | 'countdown';
 
+const SITE_URL = 'https://cpgefutur.com';
+
+const TAB_TO_PATH: Record<NavTab, string> = {
+  home: '/',
+  courses: '/cours',
+  exercises: '/exercices',
+  'erreurs-musts': '/erreurs-incontournables',
+  lab: '/labo',
+  kholle: '/kholle',
+  reflexes: '/reflexes',
+  countdown: '/calendrier-concours',
+};
+
+function parseRouteFromLocation(): { tab: NavTab; chapterId?: string } {
+  if (typeof window === 'undefined') return { tab: 'home' };
+  const path = window.location.pathname.replace(/\/+$/, '') || '/';
+
+  if (path.startsWith('/chapitre/')) {
+    const id = decodeURIComponent(path.slice('/chapitre/'.length));
+    return { tab: 'courses', chapterId: id || undefined };
+  }
+
+  const entry = (Object.entries(TAB_TO_PATH) as [NavTab, string][]).find(([, p]) => p === path);
+  return { tab: entry ? entry[0] : 'home' };
+}
+
 export default function App() {
-  const [activeTab, setActiveTab] = useState<NavTab>('home');
+  const initialRoute = parseRouteFromLocation();
+  const [activeTab, setActiveTab] = useState<NavTab>(initialRoute.tab);
+  const [selectedCourseChapter, setSelectedCourseChapter] = useState<string | undefined>(initialRoute.chapterId);
   const [selectedExoChapter, setSelectedExoChapter] = useState<string | undefined>(undefined);
   const [selectedFiliereFilter, setSelectedFiliereFilter] = useState<Filiere | 'Toutes'>('Toutes');
   const [selectedMatiereFilter, setSelectedMatiereFilter] = useState<Matiere | 'Toutes'>('Toutes');
@@ -59,13 +87,96 @@ export default function App() {
     }
   }, [theme]);
 
+  // Synchronisation avec les boutons Précédent / Suivant du navigateur
+  useEffect(() => {
+    const handlePopState = () => {
+      const parsed = parseRouteFromLocation();
+      setActiveTab(parsed.tab);
+      setSelectedCourseChapter(parsed.chapterId);
+    };
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, []);
+
+  // Mise à jour dynamique des métadonnées SEO (<title>, description, canonical)
+  useEffect(() => {
+    let title = 'CPGE Futur | Cours, Exercices et Simulations pour Prépa Scientifique';
+    let description =
+      'Plateforme d’excellence pour prépas scientifiques (MPSI, PCSI, MP, PC, PSI, MPI, BCPST) : cours officiels démontrés, annales corrigées, khôlles et simulations.';
+    let canonicalPath = TAB_TO_PATH[activeTab];
+
+    if (activeTab === 'courses' && selectedCourseChapter) {
+      const chap = COURSES_DATA.find((c) => c.id === selectedCourseChapter);
+      const chapTitle = (chap as { title?: string; titre?: string; nom?: string } | undefined)?.title
+        || (chap as { title?: string; titre?: string; nom?: string } | undefined)?.titre
+        || (chap as { title?: string; titre?: string; nom?: string } | undefined)?.nom
+        || selectedCourseChapter;
+      const matiereLabel = chap ? ` (${chap.matiere})` : '';
+      title = `${chapTitle}${matiereLabel} — Cours CPGE | CPGE Futur`;
+      description = `Fiche de cours complète et démonstrations sur ${chapTitle}${matiereLabel} pour les classes préparatoires scientifiques.`;
+      canonicalPath = `/chapitre/${encodeURIComponent(selectedCourseChapter)}`;
+    } else if (activeTab === 'courses') {
+      title = 'Cours & Théorèmes CPGE (Sup & Spé) | CPGE Futur';
+      description = 'Tous les chapitres du programme officiel CPGE : définitions, théorèmes démontrés et méthodes de calcul en Maths, Physique, Chimie, Informatique et SII.';
+    } else if (activeTab === 'exercises') {
+      title = 'Annales & Exercices Corrigés CPGE (X-ENS, Mines-Ponts, Centrale) | CPGE Futur';
+      description = 'Banque d’exercices et problèmes de concours CPGE corrigés pas à pas avec indices progressifs et rédaction modèle.';
+    } else if (activeTab === 'erreurs-musts') {
+      title = 'Erreurs Classiques & Questions Incontournables aux Concours | CPGE Futur';
+      description = 'Les pièges éliminatoires relevés dans les rapports de jurys CPGE et les questions classiques qui tombent chaque année.';
+    } else if (activeTab === 'lab') {
+      title = 'Labo Scientifique Interactif CPGE (Fourier, Bode, Optique) | CPGE Futur';
+      description = 'Simulations scientifiques interactives pour visualiser les séries de Fourier, diagrammes de Bode, filtres RLC et interférences.';
+    } else if (activeTab === 'kholle') {
+      title = 'Simulateur de Khôlle CPGE Chronométré | CPGE Futur';
+      description = 'Entraînez-vous aux oraux de CPGE en conditions réelles : question de cours, exercice au tableau et relances du khôlleur.';
+    } else if (activeTab === 'reflexes') {
+      title = 'Fiches Réflexes & Méthodes Concours CPGE | CPGE Futur';
+      description = 'Les automatismes et méthodes indispensables pour résoudre rapidement les problèmes d’écrits et d’oraux en prépa.';
+    } else if (activeTab === 'countdown') {
+      title = 'Calendrier Officiel des Concours CPGE & Compte à Rebours | CPGE Futur';
+      description = 'Dates officielles des épreuves écrites des concours X-ENS, Mines-Ponts, Centrale-Supélec, CCINP et Agro-Véto.';
+    }
+
+    document.title = title;
+
+    const metaDesc = document.querySelector('meta[name="description"]');
+    if (metaDesc) metaDesc.setAttribute('content', description);
+
+    const ogTitle = document.querySelector('meta[property="og:title"]');
+    if (ogTitle) ogTitle.setAttribute('content', title);
+
+    const ogDesc = document.querySelector('meta[property="og:description"]');
+    if (ogDesc) ogDesc.setAttribute('content', description);
+
+    let canonical = document.querySelector('link[rel="canonical"]');
+    if (!canonical) {
+      canonical = document.createElement('link');
+      canonical.setAttribute('rel', 'canonical');
+      document.head.appendChild(canonical);
+    }
+    canonical.setAttribute('href', `${SITE_URL}${canonicalPath}`);
+  }, [activeTab, selectedCourseChapter]);
+
+  const navigateToTab = (tab: NavTab, chapterId?: string) => {
+    setActiveTab(tab);
+    setSelectedCourseChapter(chapterId);
+    const nextPath =
+      tab === 'courses' && chapterId
+        ? `/chapitre/${encodeURIComponent(chapterId)}`
+        : TAB_TO_PATH[tab];
+    if (window.location.pathname !== nextPath) {
+      window.history.pushState({}, '', nextPath);
+    }
+  };
+
   const toggleTheme = () => {
     setTheme((prev) => (prev === 'dark' ? 'light' : 'dark'));
   };
 
   const navigateToExercisesForChapter = (chapterId: string) => {
     setSelectedExoChapter(chapterId);
-    setActiveTab('exercises');
+    navigateToTab('exercises');
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
@@ -77,7 +188,7 @@ export default function App() {
     setSelectedMatiereFilter(matiere);
     setSelectedFiliereFilter(filiere);
     setSelectedAnneeFilter(annee);
-    setActiveTab('courses');
+    navigateToTab('courses');
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
@@ -90,7 +201,7 @@ export default function App() {
     setSelectedFiliereFilter(filiere);
     setSelectedAnneeFilter(annee);
     setSelectedExoChapter(undefined);
-    setActiveTab('exercises');
+    navigateToTab('exercises');
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
@@ -152,7 +263,7 @@ export default function App() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-6">
           {/* Zone 1: Brand title wordmark */}
           <button
-            onClick={() => setActiveTab('home')}
+            onClick={() => navigateToTab('home')}
             className="flex items-center gap-2.5 text-lg font-bold tracking-tight text-slate-900 dark:text-white whitespace-nowrap shrink-0 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors"
           >
             <div className="w-8 h-8 rounded-lg bg-indigo-600 flex items-center justify-center text-white font-mono font-extrabold text-sm shadow-md">
@@ -180,7 +291,7 @@ export default function App() {
               Exercices Corrigés
             </button>
             <button
-              onClick={() => setActiveTab('erreurs-musts')}
+              onClick={() => navigateToTab('erreurs-musts')}
               className={`whitespace-nowrap shrink-0 transition-colors hover:text-slate-900 dark:hover:text-white flex items-center gap-1.5 ${
                 activeTab === 'erreurs-musts' ? 'text-rose-600 dark:text-rose-400 font-bold' : ''
               }`}
@@ -189,7 +300,7 @@ export default function App() {
               <span>Erreurs & Incontournables</span>
             </button>
             <button
-              onClick={() => setActiveTab('lab')}
+              onClick={() => navigateToTab('lab')}
               className={`whitespace-nowrap shrink-0 transition-colors hover:text-slate-900 dark:hover:text-white ${
                 activeTab === 'lab' ? 'text-indigo-600 dark:text-indigo-400 font-bold' : ''
               }`}
@@ -197,7 +308,7 @@ export default function App() {
               Labo Scientifique
             </button>
             <button
-              onClick={() => setActiveTab('kholle')}
+              onClick={() => navigateToTab('kholle')}
               className={`whitespace-nowrap shrink-0 transition-colors hover:text-slate-900 dark:hover:text-white ${
                 activeTab === 'kholle' ? 'text-indigo-600 dark:text-indigo-400 font-bold' : ''
               }`}
@@ -205,7 +316,7 @@ export default function App() {
               Simulateur de Khôlle
             </button>
             <button
-              onClick={() => setActiveTab('reflexes')}
+              onClick={() => navigateToTab('reflexes')}
               className={`whitespace-nowrap shrink-0 transition-colors hover:text-slate-900 dark:hover:text-white ${
                 activeTab === 'reflexes' ? 'text-indigo-600 dark:text-indigo-400 font-bold' : ''
               }`}
@@ -233,7 +344,7 @@ export default function App() {
 
             {/* Primary Action Button */}
             <button
-              onClick={() => setActiveTab('countdown')}
+              onClick={() => navigateToTab('countdown')}
               className="px-3.5 py-2 text-xs font-semibold text-white bg-indigo-600 hover:bg-indigo-500 rounded-lg transition-colors whitespace-nowrap shrink-0 flex items-center gap-1.5 shadow-sm"
             >
               <Calendar className="w-3.5 h-3.5" />
@@ -246,7 +357,7 @@ export default function App() {
         {/* Mobile quick-nav scroll bar */}
         <div className="md:hidden flex items-center gap-3 px-4 py-2 bg-slate-100 dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800/80 overflow-x-auto text-xs text-slate-600 dark:text-slate-300">
           <button
-            onClick={() => setActiveTab('home')}
+            onClick={() => navigateToTab('home')}
             className={`whitespace-nowrap shrink-0 ${activeTab === 'home' ? 'text-indigo-600 dark:text-indigo-400 font-bold' : ''}`}
           >
             Accueil
@@ -264,25 +375,25 @@ export default function App() {
             Exercices
           </button>
           <button
-            onClick={() => setActiveTab('erreurs-musts')}
+            onClick={() => navigateToTab('erreurs-musts')}
             className={`whitespace-nowrap shrink-0 ${activeTab === 'erreurs-musts' ? 'text-rose-600 dark:text-rose-400 font-bold' : ''}`}
           >
             Erreurs & Incontournables
           </button>
           <button
-            onClick={() => setActiveTab('lab')}
+            onClick={() => navigateToTab('lab')}
             className={`whitespace-nowrap shrink-0 ${activeTab === 'lab' ? 'text-indigo-600 dark:text-indigo-400 font-bold' : ''}`}
           >
             Labo
           </button>
           <button
-            onClick={() => setActiveTab('kholle')}
+            onClick={() => navigateToTab('kholle')}
             className={`whitespace-nowrap shrink-0 ${activeTab === 'kholle' ? 'text-indigo-600 dark:text-indigo-400 font-bold' : ''}`}
           >
             Khôlle
           </button>
           <button
-            onClick={() => setActiveTab('reflexes')}
+            onClick={() => navigateToTab('reflexes')}
             className={`whitespace-nowrap shrink-0 ${activeTab === 'reflexes' ? 'text-indigo-600 dark:text-indigo-400 font-bold' : ''}`}
           >
             Réflexes
@@ -420,7 +531,7 @@ export default function App() {
 
                 {/* Portal 3: Erreurs & Incontournables */}
                 <div
-                  onClick={() => setActiveTab('erreurs-musts')}
+                  onClick={() => navigateToTab('erreurs-musts')}
                   className="p-5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-rose-500/50 rounded-xl space-y-3 cursor-pointer group transition-all shadow-sm dark:shadow-none"
                 >
                   <div className="flex items-center justify-between">
@@ -445,7 +556,7 @@ export default function App() {
 
                 {/* Portal 4: Simulateur de Khôlle */}
                 <div
-                  onClick={() => setActiveTab('kholle')}
+                  onClick={() => navigateToTab('kholle')}
                   className="p-5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-amber-500/50 rounded-xl space-y-3 cursor-pointer group transition-all shadow-sm dark:shadow-none"
                 >
                   <div className="flex items-center justify-between">
@@ -510,7 +621,7 @@ export default function App() {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-2">
               {/* Lab card */}
               <div
-                onClick={() => setActiveTab('lab')}
+                onClick={() => navigateToTab('lab')}
                 className="p-5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-sky-500/50 rounded-xl cursor-pointer group transition-all flex flex-col justify-between shadow-sm dark:shadow-none"
               >
                 <div className="flex items-center gap-3">
@@ -534,7 +645,7 @@ export default function App() {
 
               {/* Reflexes card */}
               <div
-                onClick={() => setActiveTab('reflexes')}
+                onClick={() => navigateToTab('reflexes')}
                 className="p-5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-indigo-500/50 rounded-xl cursor-pointer group transition-all flex flex-col justify-between shadow-sm dark:shadow-none"
               >
                 <div className="flex items-center gap-3">
@@ -558,7 +669,7 @@ export default function App() {
 
               {/* Countdown card */}
               <div
-                onClick={() => setActiveTab('countdown')}
+                onClick={() => navigateToTab('countdown')}
                 className="p-5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-amber-500/50 rounded-xl cursor-pointer group transition-all flex flex-col justify-between shadow-sm dark:shadow-none"
               >
                 <div className="flex items-center gap-3">
