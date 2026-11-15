@@ -788,13 +788,10 @@ export default function App() {
                   </p>
                   <ul className="list-disc pl-5 space-y-1 text-slate-600 dark:text-slate-400">
                     <li>
-                      <strong>Responsable de la publication :</strong> [À compléter : Votre Nom / Prénom ou Dénomination]
+                      <strong>Contact électronique :</strong> sharinghistories955.com
                     </li>
                     <li>
-                      <strong>Contact électronique :</strong> [À compléter : contact@cpgefutur.com]
-                    </li>
-                    <li>
-                      <strong>Statut :</strong> Éditeur particulier / Projet pédagogique indépendant à vocation non lucrative
+                      <strong>Statut :</strong> Éditeur particulier / Projet pédagogique 
                     </li>
                   </ul>
                 </section>
