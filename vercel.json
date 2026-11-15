@@ -1,8 +1,4 @@
 {
-  "rewrites": [
-    {
-      "source": "/((?!assets/|sitemap\\.xml|robots\\.txt|favicon\\.ico).*)",
-      "destination": "/index.html"
-    }
-  ]
+  "cleanUrls": true,
+  "trailingSlash": false
 }

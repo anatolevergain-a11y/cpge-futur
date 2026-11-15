@@ -13,6 +13,7 @@ import {
   Activity,
   Award,
   ArrowRight,
+  ArrowLeft,
   Calendar,
   ShieldAlert,
   ChevronRight,
@@ -23,10 +24,20 @@ import {
   Wrench,
   Sparkles,
   Sun,
-  Moon
+  Moon,
+  Scale
 } from 'lucide-react';
 
-type NavTab = 'home' | 'courses' | 'exercises' | 'lab' | 'kholle' | 'reflexes' | 'erreurs-musts' | 'countdown';
+type NavTab =
+  | 'home'
+  | 'courses'
+  | 'exercises'
+  | 'lab'
+  | 'kholle'
+  | 'reflexes'
+  | 'erreurs-musts'
+  | 'countdown'
+  | 'legal';
 
 const SITE_URL = 'https://cpgefutur.com';
 
@@ -39,6 +50,7 @@ const TAB_TO_PATH: Record<NavTab, string> = {
   kholle: '/kholle',
   reflexes: '/reflexes',
   countdown: '/calendrier-concours',
+  legal: '/mentions-legales',
 };
 
 function parseRouteFromLocation(): { tab: NavTab; chapterId?: string } {
@@ -136,6 +148,9 @@ export default function App() {
     } else if (activeTab === 'countdown') {
       title = 'Calendrier Officiel des Concours CPGE & Compte à Rebours | CPGE Futur';
       description = 'Dates officielles des épreuves écrites des concours X-ENS, Mines-Ponts, Centrale-Supélec, CCINP et Agro-Véto.';
+    } else if (activeTab === 'legal') {
+      title = 'Mentions Légales & Politique de Confidentialité | CPGE Futur';
+      description = 'Mentions légales, informations sur l’éditeur, l’hébergement, la propriété intellectuelle et la gestion des données personnelles de la plateforme CPGE Futur.';
     }
 
     document.title = title;
@@ -728,6 +743,133 @@ export default function App() {
 
         {/* VIEW 8: COUNTDOWN */}
         {activeTab === 'countdown' && <ConcoursCountdown />}
+
+        {/* VIEW 9: MENTIONS LÉGALES */}
+        {activeTab === 'legal' && (
+          <div className="max-w-4xl mx-auto space-y-6">
+            <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 sm:p-8 shadow-sm dark:shadow-none space-y-6">
+              <div className="flex flex-wrap items-center justify-between gap-4 border-b border-slate-200 dark:border-slate-800 pb-5">
+                <div>
+                  <div className="flex items-center gap-2 text-xs font-mono font-semibold text-indigo-600 dark:text-indigo-400">
+                    <Scale className="w-4 h-4" />
+                    <span>INFORMATIONS RÉGLEMENTAIRES & CONFIDENTIALITÉ</span>
+                  </div>
+                  <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-slate-900 dark:text-white mt-1">
+                    Mentions Légales
+                  </h1>
+                  <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
+                    Conformément aux dispositions de la loi n° 2004-575 du 21 juin 2004 pour la confiance dans l'économie numérique (LCEN).
+                  </p>
+                </div>
+
+                <button
+                  onClick={() => navigateToTab('home')}
+                  className="px-3.5 py-2 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 rounded-xl text-xs font-semibold flex items-center gap-1.5 transition-colors"
+                >
+                  <ArrowLeft className="w-3.5 h-3.5" />
+                  <span>Retour à l'accueil</span>
+                </button>
+              </div>
+
+              <div className="space-y-6 text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
+                <section className="space-y-2">
+                  <h2 className="text-base sm:text-lg font-bold text-slate-900 dark:text-white">
+                    1. Éditeur du site
+                  </h2>
+                  <p>
+                    Le site <strong>CPGE Futur</strong> (accessible à l'adresse{' '}
+                    <a
+                      href="https://cpgefutur.com"
+                      className="text-indigo-600 dark:text-indigo-400 hover:underline"
+                    >
+                      https://cpgefutur.com
+                    </a>
+                    ) est une plateforme éducative gratuite dédiée aux étudiants des classes préparatoires aux grandes écoles scientifiques (MPSI, PCSI, MP, PC, PSI, MPI, BCPST).
+                  </p>
+                  <ul className="list-disc pl-5 space-y-1 text-slate-600 dark:text-slate-400">
+                    <li>
+                      <strong>Responsable de la publication :</strong> [À compléter : Votre Nom / Prénom ou Dénomination]
+                    </li>
+                    <li>
+                      <strong>Contact électronique :</strong> [À compléter : contact@cpgefutur.com]
+                    </li>
+                    <li>
+                      <strong>Statut :</strong> Éditeur particulier / Projet pédagogique indépendant à vocation non lucrative
+                    </li>
+                  </ul>
+                </section>
+
+                <section className="space-y-2">
+                  <h2 className="text-base sm:text-lg font-bold text-slate-900 dark:text-white">
+                    2. Hébergement
+                  </h2>
+                  <p>
+                    Le site est hébergé par la société <strong>Vercel Inc.</strong>, située au 440 N Barranca Ave #4133, Covina, CA 91723, États-Unis (Site web :{' '}
+                    <a
+                      href="https://vercel.com"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-indigo-600 dark:text-indigo-400 hover:underline"
+                    >
+                      https://vercel.com
+                    </a>
+                    ).
+                  </p>
+                </section>
+
+                <section className="space-y-2">
+                  <h2 className="text-base sm:text-lg font-bold text-slate-900 dark:text-white">
+                    3. Propriété intellectuelle
+                  </h2>
+                  <p>
+                    L'ensemble des ressources pédagogiques, fiches de cours, démonstrations, annales corrigées, fiches réflexes, simulations interactives et code source présents sur <strong>CPGE Futur</strong> sont protégés par le droit de la propriété intellectuelle.
+                  </p>
+                  <p>
+                    La consultation, le téléchargement et l'impression des contenus sont autorisés pour un usage strictement personnel, étudiant et éducatif. Toute reproduction, diffusion ou exploitation commerciale sans accord préalable de l'éditeur est interdite.
+                  </p>
+                </section>
+
+                <section className="space-y-2">
+                  <h2 className="text-base sm:text-lg font-bold text-slate-900 dark:text-white">
+                    4. Données personnelles, stockage local & Cookies
+                  </h2>
+                  <p>
+                    <strong>CPGE Futur</strong> ne requiert aucune création de compte nominatif et ne collecte aucune donnée personnelle directement sur ses serveurs. Vos préférences d'interface (notamment le choix entre le mode sombre et le mode clair) sont enregistrées uniquement localement sur votre appareil via le stockage interne de votre navigateur (<em>localStorage</em>).
+                  </p>
+                  <p>
+                    Afin de financer la gratuité intégrale de la plateforme et d'en mesurer l'audience, le site utilise des services tiers susceptibles de déposer des cookies :
+                  </p>
+                  <ul className="list-disc pl-5 space-y-1 text-slate-600 dark:text-slate-400">
+                    <li>
+                      <strong>Google Analytics (GA4) :</strong> mesure d'audience anonyme permettant d'améliorer l'ergonomie et les contenus pédagogiques.
+                    </li>
+                    <li>
+                      <strong>Google AdSense :</strong> diffusion d'annonces publicitaires non intrusives. Google utilise des cookies pour diffuser des annonces adaptées aux centres d'intérêt des utilisateurs. Vous pouvez désactiver la personnalisation des annonces depuis les{' '}
+                      <a
+                        href="https://adssettings.google.com"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-indigo-600 dark:text-indigo-400 hover:underline"
+                      >
+                        Paramètres des annonces Google
+                      </a>
+                      .
+                    </li>
+                  </ul>
+                </section>
+
+                <section className="space-y-2">
+                  <h2 className="text-base sm:text-lg font-bold text-slate-900 dark:text-white">
+                    5. Limitation de responsabilité
+                  </h2>
+                  <p>
+                    Les cours, démonstrations et corrigés d'annales proposés sur <strong>CPGE Futur</strong> sont rédigés en conformité avec les programmes officiels des classes préparatoires scientifiques à des fins d'accompagnement académique. Malgré le soin apporté à leur vérification, l'éditeur ne saurait être tenu responsable d'éventuelles erreurs ou omissions.
+                  </p>
+                </section>
+              </div>
+            </div>
+          </div>
+        )}
       </main>
 
       {/* FOOTER */}
@@ -749,8 +891,24 @@ export default function App() {
             <span>BCPST</span>
           </div>
 
-          <div>
+          <div className="flex flex-wrap items-center justify-center gap-3">
             <span>Conçu avec rigueur mathématique et physique pour les concours.</span>
+            <span aria-hidden="true">·</span>
+            <a
+              href="/mentions-legales"
+              onClick={(e) => {
+                e.preventDefault();
+                navigateToTab('legal');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              }}
+              className={`hover:underline transition-colors ${
+                activeTab === 'legal'
+                  ? 'text-indigo-600 dark:text-indigo-400 font-semibold'
+                  : 'text-slate-700 dark:text-slate-300 hover:text-indigo-600 dark:hover:text-indigo-400'
+              }`}
+            >
+              Mentions légales
+            </a>
           </div>
         </div>
       </footer>
